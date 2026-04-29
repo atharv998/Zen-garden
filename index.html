@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Weboreel - Zen Garden</title>
-    <!-- Project: Weboreel - Zen Garden v6 (Spotify Integration) -->
-    <!-- Developer: Atharv Jeetendra Gaware | Roll No: C-35 -->
+    <!-- Project: Weboreel - Zen Garden v7 (Mobile Responsive) -->
+   
     <style>
         :root {
             --inhale-color: radial-gradient(circle, #a2c2e1, #1e3a8a);
@@ -24,6 +24,8 @@
             transition: background-color 1s ease;
             overflow: hidden;
             color: white;
+            /* Prevent pull-to-refresh on mobile */
+            overscroll-behavior-y: none;
         }
 
         /* Top Navigation / Controls */
@@ -38,6 +40,7 @@
             justify-content: space-between;
             align-items: center;
             z-index: 20;
+            gap: 15px;
         }
 
         .glass-panel {
@@ -110,6 +113,9 @@
             text-align: center;
             z-index: 10;
             pointer-events: none;
+            width: 100%;
+            padding: 0 20px;
+            box-sizing: border-box;
         }
 
         #instruction {
@@ -237,11 +243,12 @@
 
         .close-btn {
             position: absolute;
-            top: 20px; right: 20px;
-            font-size: 1.5rem;
+            top: 15px; right: 20px;
+            font-size: 2rem;
             cursor: pointer;
             color: white;
             opacity: 0.7;
+            line-height: 1;
         }
         .close-btn:hover { opacity: 1; }
 
@@ -305,31 +312,107 @@
             margin-top: 20px;
             line-height: 1.5;
             font-size: 0.95rem;
+            overflow-y: auto;
+            max-height: 100px;
         }
 
-        h2 { font-weight: 300; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-top: 0; }
+        h2 { font-weight: 300; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-top: 0; font-size: 1.5rem; }
         h3 { font-weight: 400; font-size: 1.1rem; margin: 0 0 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
 
-        /* Spotify Widget */
+        /* Spotify Widget (Centered for better mobile display) */
         #spotify-widget-container {
             position: absolute;
             bottom: 30px;
-            right: 30px;
+            left: 50%;
             z-index: 30;
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateX(-50%) translateY(20px);
             pointer-events: none;
             transition: opacity 0.5s ease, transform 0.5s ease;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             border-radius: 12px;
+            width: 300px;
+            max-width: 90vw;
+        }
+
+        #spotify-widget-container iframe {
+            width: 100%;
         }
 
         #spotify-widget-container.visible {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateX(-50%) translateY(0);
             pointer-events: auto;
         }
 
+        /* --- MOBILE RESPONSIVE CSS --- */
+        @media (max-width: 768px) {
+            #top-bar {
+                flex-direction: column;
+                padding: 10px;
+                gap: 10px;
+            }
+            .glass-panel {
+                width: 100%;
+                justify-content: space-around;
+                padding: 10px;
+                box-sizing: border-box;
+                border-radius: 15px;
+            }
+            select {
+                width: 100%;
+                text-align: center;
+                font-size: 0.9rem;
+            }
+            .timer-group {
+                min-width: 50px;
+            }
+            .timer-label {
+                font-size: 0.6rem;
+            }
+            .timer-value {
+                font-size: 1rem;
+            }
+            button {
+                font-size: 0.9rem;
+            }
+            #instruction {
+                font-size: 1.8rem;
+            }
+            #vibe-statusText {
+                font-size: 1rem;
+            }
+            .ui-overlay {
+                top: 28%;
+            }
+            #breathing-sphere {
+                width: 100px;
+                height: 100px;
+            }
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+                max-height: 90vh;
+            }
+            .stat-card p {
+                font-size: 1.4rem;
+            }
+            .stat-grid {
+                gap: 10px;
+            }
+            .suggestion-box {
+                font-size: 0.85rem;
+                padding: 10px;
+            }
+            .log-item {
+                flex-direction: column;
+                gap: 5px;
+            }
+            .log-item > span:first-child {
+                display: flex;
+                justify-content: space-between;
+            }
+        }
     </style>
 </head>
 <body>
@@ -337,11 +420,11 @@
     <div id="top-bar">
         <div class="glass-panel">
             <select id="asana-selector">
-                <option value="interactive">Pranayama: Mindful Touch (Interactive)</option>
-                <option value="sama">Asana: Sama Vritti (Box Breathing)</option>
-                <option value="anapanasati">Asana: Anapanasati (Deep Focus)</option>
-                <option value="ujjayi">Pranayama: Ujjayi (Ocean Breath)</option>
-                <option value="nadi">Pranayama: Nadi Shodhana (Alt. Nostril)</option>
+                <option value="interactive">Pranayama: Mindful Touch</option>
+                <option value="sama">Asana: Sama Vritti (Box)</option>
+                <option value="anapanasati">Asana: Anapanasati (Deep)</option>
+                <option value="ujjayi">Pranayama: Ujjayi (Ocean)</option>
+                <option value="nadi">Pranayama: Nadi Shodhana (Alt)</option>
             </select>
         </div>
         <div class="glass-panel">
@@ -352,7 +435,6 @@
                     <path d="M8 15c2.5-1 6.5-.5 8.5 0"></path>
                     <path d="M8 8.5c4-2 9-1 11 0"></path>
                 </svg>
-                Spotify
             </button>
             <div style="width: 1px; height: 30px; background: rgba(255,255,255,0.2);"></div>
             <div class="timer-group" title="Current Inhale Duration">
@@ -365,16 +447,15 @@
                 <span class="timer-value" id="daily-total-timer">00:00</span>
             </div>
             <div style="width: 1px; height: 30px; background: rgba(255,255,255,0.2);"></div>
-            <button id="insights-btn" style="font-weight: bold;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-                Insights
+            <button id="insights-btn" style="font-weight: bold;" title="Insights & Logs">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
             </button>
         </div>
     </div>
 
     <!-- Spotify Embed Player -->
     <div id="spotify-widget-container">
-        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWZqd5JICZI0u?utm_source=generator&theme=0" width="300" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWZqd5JICZI0u?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
     </div>
 
     <div id="zen-container">
@@ -382,7 +463,7 @@
         <div id="nature-layer"></div>
         
         <div class="ui-overlay">
-            <h1 id="instruction">Press & Hold to Inhale</h1>
+            <h1 id="instruction">Tap & Hold to Inhale</h1>
             <div id="vibe-statusText">Find your center</div>
         </div>
         
@@ -443,6 +524,7 @@
 
         // Handle Spotify Toggle
         musicBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             e.stopPropagation(); // Prevent triggering inhale
             isSpotifyVisible = !isSpotifyVisible;
             if(isSpotifyVisible) {
@@ -510,7 +592,7 @@
             [...logs].reverse().forEach(log => {
                 const el = document.createElement('div');
                 el.className = `log-item ${log.valid ? '' : 'warning'}`;
-                el.innerHTML = `<span><span class="log-time">${log.time}</span> &nbsp; <span style="opacity:0.8">${log.mode}</span></span><span class="log-duration">${log.duration}s</span>`;
+                el.innerHTML = `<span><span class="log-time">${log.time}</span>   <span style="opacity:0.8">${log.mode}</span></span><span class="log-duration">${log.duration}s</span>`;
                 logListContainer.appendChild(el);
             });
         }
@@ -531,10 +613,14 @@
 
         // Interactive Logic
         const handleInhale = (e) => {
+            // Do not trigger if interacting with top-bar, modal, or spotify widget
             if (e.target.closest('#top-bar') || e.target.closest('#insights-modal') || e.target.closest('#spotify-widget-container')) return;
 
             if (currentMode !== 'interactive') return;
             if (e.type === 'mousedown' && e.button !== 0) return;
+            
+            // Prevent default touch behavior (like zooming/scrolling) while breathing
+            if (e.type === 'touchstart') e.preventDefault();
             
             isHolding = true;
             breathStart = Date.now();
@@ -576,7 +662,7 @@
                 setTimeout(() => {
                     document.body.style.backgroundColor = "#0a0a0a";
                     if(!isHolding && currentMode === 'interactive') {
-                        instruction.innerText = "Press & Hold to Inhale";
+                        instruction.innerText = "Tap & Hold to Inhale";
                         statusText.innerText = "Find your center";
                         currentBreathDisplay.innerText = "00.0s";
                     }
@@ -587,7 +673,7 @@
 
                 setTimeout(() => {
                     if(!isHolding && currentMode === 'interactive') {
-                        instruction.innerText = "Press & Hold to Inhale";
+                        instruction.innerText = "Tap & Hold to Inhale";
                         statusText.innerText = "Find your center";
                         currentBreathDisplay.innerText = "00.0s";
                     }
@@ -610,7 +696,7 @@
                     else if(step === 2) { instruction.innerText = "Exhale..."; statusText.innerText = "Release slowly"; }
                     else if(step === 3) { 
                         instruction.innerText = "Hold..."; statusText.innerText = "Empty your mind"; 
-                        logBreathRecord("Sama Vritti Cycle", 16, true);
+                        logBreathRecord("Sama Vritti", 16, true);
                     }
                     healthData.dailyTotals[todayStr] += 4;
                     saveData();
@@ -634,7 +720,7 @@
                         sphere.style.background = "rgba(255, 255, 255, 0.1)";
                         instruction.innerText = "Deep Exhale...";
                         statusText.innerText = "Let go of tension";
-                        logBreathRecord("Anapanasati Cycle", 12, true);
+                        logBreathRecord("Anapanasati", 12, true);
                     }
                     healthData.dailyTotals[todayStr] += 6;
                     saveData();
@@ -649,11 +735,11 @@
                 const ujjayiCycle = () => {
                     if(isExhaling) {
                         instruction.innerText = "Inhale...";
-                        statusText.innerText = "Constrict back of throat slightly";
+                        statusText.innerText = "Constrict back of throat";
                     } else {
                         instruction.innerText = "Exhale...";
                         statusText.innerText = "Create an ocean sound";
-                        logBreathRecord("Ujjayi Breath", 10, true);
+                        logBreathRecord("Ujjayi", 10, true);
                     }
                     healthData.dailyTotals[todayStr] += 5;
                     saveData();
@@ -690,7 +776,7 @@
             currentBreathDisplay.innerText = "00.0s";
             
             if (currentMode === 'interactive') {
-                instruction.innerText = "Press & Hold to Inhale";
+                instruction.innerText = "Tap & Hold to Inhale";
                 statusText.innerText = "Find your center";
                 sphere.style.transition = "transform 3s ease-in-out, background 3s ease, box-shadow 3s ease";
                 sphere.style.transform = "scale(1)";
@@ -699,6 +785,7 @@
             }
         });
 
+        // Use passive: false for touchstart to allow e.preventDefault()
         window.addEventListener('mousedown', handleInhale);
         window.addEventListener('mouseup', handleExhale);
         window.addEventListener('touchstart', handleInhale, {passive: false});
@@ -711,22 +798,23 @@
             
             let suggestionHtml = "";
             if (todayTotal < 60) {
-                suggestionHtml = `<strong>Diagnostic:</strong> Minimal vital breath capacity today.<br><br><strong>Yogic Recommendation:</strong> Begin with <em>Kapalabhati</em> to oxygenate the blood, followed by Surya Namaskar.`;
+                suggestionHtml = `<strong>Diagnostic:</strong> Minimal capacity.<br><strong>Recommend:</strong> Kapalabhati followed by Surya Namaskar.`;
             } else if (todayTotal >= 60 && todayTotal < 300) {
-                suggestionHtml = `<strong>Diagnostic:</strong> Consistent foundational practice.<br><br><strong>Yogic Recommendation:</strong> To deepen your practice, transition to <em>Nadi Shodhana</em> to foster equilibrium for deeper academic focus.`;
+                suggestionHtml = `<strong>Diagnostic:</strong> Consistent practice.<br><strong>Recommend:</strong> Nadi Shodhana for deeper academic focus.`;
             } else {
-                suggestionHtml = `<strong>Diagnostic:</strong> Advanced respiratory control achieved.<br><br><strong>Yogic Recommendation:</strong> Your capacity is primed for deeper states. Conclude with Yoga Nidra / Shavasana to integrate benefits.`;
+                suggestionHtml = `<strong>Diagnostic:</strong> Advanced control.<br><strong>Recommend:</strong> Conclude with Yoga Nidra.`;
             }
 
             if (hour < 10) {
-                suggestionHtml += `<br><br><em>🌅 Morning Vitals:</em> Morning practice aligns with universal circadian rhythms. Focus on expansion.`;
+                suggestionHtml += `<br><br><em>🌅 Morning Vitals:</em> Focus on expansion.`;
             } else if (hour > 18) {
-                suggestionHtml += `<br><br><em>🌙 Evening Vitals:</em> Prioritize parasympathetic activation. <em>Sama Vritti</em> will help down-regulate your nervous system.`;
+                suggestionHtml += `<br><br><em>🌙 Evening Vitals:</em> Prioritize parasympathetic activation (Sama Vritti).`;
             }
             suggestionBox.innerHTML = suggestionHtml;
         };
 
         insightsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             e.stopPropagation();
             document.getElementById('stat-today').innerText = `${Math.floor(healthData.dailyTotals[todayStr] / 60)}m ${Math.floor(healthData.dailyTotals[todayStr] % 60)}s`;
             document.getElementById('stat-streak').innerText = `${healthData.streak} days`;
@@ -738,6 +826,7 @@
         });
 
         closeModal.addEventListener('click', (e) => {
+            e.preventDefault();
             e.stopPropagation();
             insightsModal.style.opacity = '0';
             setTimeout(() => insightsModal.style.display = 'none', 500);
